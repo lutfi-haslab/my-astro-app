@@ -1,0 +1,67 @@
+---
+console.log("AstroCounter");
+type Props = {};
+
+const {} = Astro.props;
+const data = "AstroCounter    jjjj";
+---
+
+<div id="astro">
+  <p>{data}</p>
+  <button id="btn-increase">one up</button>
+  <h1><span id="counter">{0}</span> around here ...</h1>
+  <!-- Todo -->
+  <div>
+    <h2>Todo</h2>
+    <p id="userId"></p>
+    <p id="id"></p>
+    <p id="title"></p>
+    <p id="completed"></p>
+  </div>
+</div>
+<script>
+  import { testStore, subscribe } from "../store";
+  import type { Todo } from "../data/posts/model";
+  const userId = document.getElementById("userId");
+  const id = document.getElementById("id");
+  const title = document.getElementById("title");
+  const completed = document.getElementById("completed");
+
+  const updateCounter = () => {
+    const counter = document.getElementById("counter");
+    if (counter) {
+      counter.textContent = String(testStore.getState().bears);
+    }
+    if(title){
+        title.textContent = String(testStore.getState().title);
+    }
+  };
+
+  const btnIncrease = document.getElementById("btn-increase");
+
+  if (btnIncrease) {
+    btnIncrease.onclick = () => {
+      console.log("btn-increase clicked");
+      testStore.getState().increasePopulation();
+    };
+  }
+
+  fetch("https://jsonplaceholder.typicode.com/todos/1")
+    .then((response) => response.json())
+    .then((data: Todo) => {
+      console.log(data);
+      if (userId && id && title && completed) {
+        testStore.getState().setBears(data.userId);
+        testStore.getState().setTitle(data.title);
+        userId.textContent = String(data.userId);
+        id.textContent = String(data.id);
+        // title.textContent = String(data.title);
+        completed.textContent = String(data.completed);
+      }
+    });
+
+  subscribe(updateCounter);
+  updateCounter();
+</script>
+
+<style></style>
